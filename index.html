@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pokédex 8-bit</title>
+  <meta name="description" content="Pokédex de los 150 Pokémon originales, estilo 8 bits, con voz.">
+  <meta name="theme-color" content="#1546b8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main class="dex" aria-label="Pokédex">
+
+    <!-- ============ MITAD IZQUIERDA: cabeza + pantalla + controles ============ -->
+    <section class="dex__izq">
+      <header class="dex__cabeza">
+        <div class="lente" id="lente" aria-hidden="true"><span class="lente__brillo"></span></div>
+        <div class="leds" aria-hidden="true">
+          <span class="led led--rojo"></span>
+          <span class="led led--amarillo"></span>
+          <span class="led led--verde"></span>
+        </div>
+        <h1 class="titulo">POKéDEX</h1>
+      </header>
+
+      <div class="marco">
+        <div class="marco__puntos" aria-hidden="true"><span></span><span></span></div>
+        <div class="pantalla" id="pantalla">
+          <img id="sprite" class="pantalla__sprite" alt="" width="192" height="192">
+          <p id="cargando" class="pantalla__msg">CARGANDO…</p>
+          <div id="pantallaError" class="pantalla__error" hidden>
+            <p id="pantallaErrorTxt">ERROR</p>
+            <button class="btn-pixel" id="btnReintentar">REINTENTAR</button>
+          </div>
+        </div>
+        <div class="marco__pie">
+          <span class="led led--rojo led--chico" id="ledActividad" aria-hidden="true"></span>
+          <div class="toggles">
+            <button class="chip" id="btnShiny" aria-pressed="false" title="Versión shiny">✨ SHINY</button>
+            <button class="chip" id="btnHD" aria-pressed="false" title="Arte oficial">🖼 HD</button>
+          </div>
+          <div class="rejilla" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+
+      <div class="nombre-barra">
+        <span id="numero" class="nombre-barra__num">#001</span>
+        <h2 id="nombre" class="nombre-barra__nombre">???</h2>
+      </div>
+
+      <div class="controles">
+        <button class="btn-voz" id="btnVoz" aria-label="Escuchar información" title="Escuchar">🔊</button>
+
+        <div class="dpad" role="group" aria-label="Navegación">
+          <button class="dpad__b dpad__arriba" id="btnPrimero" aria-label="Ir al #001">▲</button>
+          <button class="dpad__b dpad__izq" id="btnAnterior" aria-label="Anterior">◀</button>
+          <span class="dpad__centro" aria-hidden="true"></span>
+          <button class="dpad__b dpad__der" id="btnSiguiente" aria-label="Siguiente">▶</button>
+          <button class="dpad__b dpad__abajo" id="btnUltimo" aria-label="Ir al último">▼</button>
+        </div>
+      </div>
+
+      <form class="buscar" id="formBuscar" autocomplete="off">
+        <button type="button" class="btn-pixel" id="btnLista" title="Ver lista, buscar y filtrar por tipo">☰</button>
+        <label for="inputBuscar" class="sr-only">Buscar por número o nombre</label>
+        <input id="inputBuscar" list="listaPokemon" placeholder="Nº o nombre" inputmode="search">
+        <datalist id="listaPokemon"></datalist>
+        <button type="submit" class="btn-pixel">IR</button>
+      </form>
+    </section>
+
+    <!-- ============ MITAD DERECHA: información ============ -->
+    <section class="dex__der" aria-live="polite">
+      <article class="panel">
+        <h3 class="panel__t">TIPO</h3>
+        <div id="tipos" class="tipos"></div>
+        <p id="categoria" class="texto-chico"></p>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">DEBILIDADES</h3>
+        <div id="debilidades" class="tipos"></div>
+        <details class="mas">
+          <summary>Resistencias e inmunidades</summary>
+          <div id="resistencias" class="tipos"></div>
+        </details>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">DATOS</h3>
+        <dl class="datos">
+          <div><dt>ALTURA</dt><dd id="altura">-</dd></div>
+          <div><dt>PESO</dt><dd id="peso">-</dd></div>
+        </dl>
+        <div id="stats" class="stats"></div>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">HABILIDADES</h3>
+        <div id="habilidades" class="habilidades"></div>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">DESCRIPCIÓN</h3>
+        <p id="descripcion" class="texto"></p>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">EVOLUCIÓN</h3>
+        <div id="cadena" class="cadena"></div>
+        <p id="evolucionTexto" class="texto"></p>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">VARIANTES</h3>
+        <div id="variantes" class="variantes"></div>
+      </article>
+
+      <article class="panel">
+        <h3 class="panel__t">MIS IMÁGENES</h3>
+        <div id="galeria" class="galeria"></div>
+        <label class="btn-pixel btn-pixel--ancho">
+          ＋ AÑADIR IMAGEN
+          <input type="file" id="inputImagen" accept="image/*" multiple hidden>
+        </label>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="visor" class="visor">
+    <img id="visorImg" alt="Imagen añadida">
+    <div class="visor__acciones">
+      <button class="btn-pixel" id="visorPrincipal">★ PRINCIPAL</button>
+      <button class="btn-pixel btn-pixel--rojo" id="visorBorrar">🗑 BORRAR</button>
+      <button class="btn-pixel" id="visorCerrar">✕</button>
+    </div>
+  </dialog>
+
+  <!-- Listado: búsqueda + filtro por tipo + paginación (Épicas 1 y 3 del backlog) -->
+  <dialog id="lista" class="lista" aria-label="Lista de Pokémon">
+    <div class="lista__cabeza">
+      <h3 class="panel__t">LISTA</h3>
+      <button class="btn-pixel" id="listaCerrar" aria-label="Cerrar">✕</button>
+    </div>
+    <input id="listaBuscar" class="lista__buscar" placeholder="Buscar nombre (ej. char)" autocomplete="off">
+    <div id="listaTipos" class="lista__tipos"></div>
+    <p id="listaInfo" class="texto-chico"></p>
+    <div id="listaGrid" class="lista__grid"></div>
+    <button class="btn-pixel btn-pixel--ancho" id="listaMas" hidden>CARGAR MÁS</button>
+  </dialog>
+
+  <div id="offline" class="offline" hidden>📡 SIN CONEXIÓN · mostrando datos guardados</div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
